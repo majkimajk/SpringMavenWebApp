@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.majkimajk.dao.UserDAO;
 import com.majkimajk.dao.UserDAOImpl;
 import com.majkimajk.entity.User;
+import com.majkimajk.geoloc.GetAddress;
 import com.majkimajk.service.UserService;
 
 @Controller
@@ -56,6 +57,7 @@ public class MyController {
 		User theUser = service.getUser(theId);
 		
 		theModel.addAttribute("user", theUser);
+	
 		return "/add-user";
 		
 	}
@@ -69,7 +71,30 @@ public class MyController {
 	}
 	
 	@GetMapping("/geoloc")
-	public String surprise() {
+	public String showChoice() {
 		return "geoloc";
+	}
+	
+	@GetMapping("/geoloc/getcoordinates")
+	public String getCoord() {
+		return "getcoordinates";
+	}
+	
+	
+	@GetMapping("/geoloc/getaddress")
+	public String getAddr(Model theModel) {
+		GetAddress adr = new GetAddress();
+		theModel.addAttribute("getAdr", adr);
+		return "getaddress";
+		
+		
+	}
+	
+	@PostMapping("/geoloc/showaddress")
+	public String showaddress(@ModelAttribute("getAdr") GetAddress theAddress, Model theModel) {
+		String url = theAddress.getAdressUrl();
+		String addressToShow = theAddress.getFinalAddress(url);
+		theModel.addAttribute("addressToShow", addressToShow);
+		return "showaddress";
 	}
 }
