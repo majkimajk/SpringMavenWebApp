@@ -6,15 +6,19 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
+<link type="text/css" rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/style.css" />
+	<link type="text/css" rel="stylesheet"
+	href="${pageContext.request.contextPath}/resources/css/add-customer-style.css" />
 </head>
 <body>
 	<input type="button" value="Get the coordinates"
 		onclick="window.location.href='geoloc/getcoordinates'; return false;"
-		class="button-button" />
+		class="add-button" />
 
 	<input type="button" value="Get the address"
 		onclick="window.location.href='geoloc/getaddress'; return false;"
-		class="button-button" />
+		class="add-button" />
 
 </body>
 </html>

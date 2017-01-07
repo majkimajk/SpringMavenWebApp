@@ -2,6 +2,7 @@ package com.majkimajk.controller;
 
 import java.util.List;
 
+import org.jgroups.protocols.pbcast.CoordGmsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,7 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.majkimajk.dao.UserDAO;
 import com.majkimajk.dao.UserDAOImpl;
 import com.majkimajk.entity.User;
-import com.majkimajk.geoloc.GetAddress;
+import com.majkimajk.geoloc.Address;
+import com.majkimajk.geoloc.Coordinates;
 import com.majkimajk.service.UserService;
 
 @Controller
@@ -76,14 +78,25 @@ public class MyController {
 	}
 	
 	@GetMapping("/geoloc/getcoordinates")
-	public String getCoord() {
+	public String getCoord(Model theModel) {
+		
+		Coordinates coord = new Coordinates();
+		theModel.addAttribute("getCoord", coord);
 		return "getcoordinates";
+	}
+	
+	@PostMapping("/geoloc/showcoords")
+	public String showCoords(@ModelAttribute("getCoord") Coordinates theCoords, Model theModel){
+		String url = theCoords.getAddressUrl();
+		String coordsToShow = theCoords.getCoordinates(url);
+		theModel.addAttribute("coordsToShow", coordsToShow);
+		return "showcoords";
 	}
 	
 	
 	@GetMapping("/geoloc/getaddress")
 	public String getAddr(Model theModel) {
-		GetAddress adr = new GetAddress();
+		Address adr = new Address();
 		theModel.addAttribute("getAdr", adr);
 		return "getaddress";
 		
@@ -91,7 +104,7 @@ public class MyController {
 	}
 	
 	@PostMapping("/geoloc/showaddress")
-	public String showaddress(@ModelAttribute("getAdr") GetAddress theAddress, Model theModel) {
+	public String showaddress(@ModelAttribute("getAdr") Address theAddress, Model theModel) {
 		String url = theAddress.getAdressUrl();
 		String addressToShow = theAddress.getFinalAddress(url);
 		theModel.addAttribute("addressToShow", addressToShow);

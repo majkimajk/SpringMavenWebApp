@@ -12,7 +12,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class GetAddress {
+public class Address {
 	
 	private final String apiKey = "AIzaSyBiBfgpBtHxApijl__mW0SRI0m8aJmhJWg";
     private final String baseUrl = "https://maps.googleapis.com/maps/api/geocode/json?";
@@ -52,7 +52,7 @@ public class GetAddress {
         try {
             CloseableHttpClient httpClient = HttpClientBuilder.create().build();
             CloseableHttpResponse response = httpClient.execute(get);
-            System.out.println(response.getStatusLine().getStatusCode());
+//            System.out.println(response.getStatusLine().getStatusCode());
             BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
             StringBuffer result = new StringBuffer();
             String line;
@@ -81,7 +81,8 @@ public class GetAddress {
 
         return outcome;
 	}
-    
+	
+	
     
     
     
