@@ -105,8 +105,8 @@ public class MyController {
 	
 	@PostMapping("/geoloc/showaddress")
 	public String showaddress(@ModelAttribute("getAdr") Address theAddress, Model theModel) {
-		String url = theAddress.getAdressUrl();
-		String addressToShow = theAddress.getFinalAddress(url);
+		//String url = theAddress.getAdressUrl();
+		String addressToShow = theAddress.getFinalAddress();
 		theModel.addAttribute("addressToShow", addressToShow);
 		return "showaddress";
 	}

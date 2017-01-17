@@ -13,78 +13,114 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Address {
-	
+
 	private final String apiKey = "AIzaSyBiBfgpBtHxApijl__mW0SRI0m8aJmhJWg";
-    private final String baseUrl = "https://maps.googleapis.com/maps/api/geocode/json?";
-    
-    
-    
-    private String lattitude;
-    private String longitude;
-    private String addressUrl = "";
-    private String outcome;
-    
+	private final String baseUrl = "https://maps.googleapis.com/maps/api/geocode/json?";
+
+	private String lattitude;
+	private String longitude;
+	private String addressUrl = "";
+	private String finalAddress;
+	private String outcome;
+
 	public String getLattitude() {
 		return lattitude;
 	}
+
 	public void setLattitude(String lattitude) {
 		this.lattitude = lattitude;
 	}
+
 	public String getLongitude() {
 		return longitude;
 	}
+
 	public void setLongitude(String longitude) {
 		this.longitude = longitude;
 	}
-	
-	public String getAdressUrl() {
+
+	public String getFinalAddress() {
+
+		try {
+
+			finalAddress = getSmallerVersionOfJSONObject().getString("formatted_address");
+			
+
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
 		
-		addressUrl = lattitude + "," + longitude;
-		return addressUrl;
-	}
-	
-	public String getFinalAddress(String finalAddressUrl) {
-		
-		String url = baseUrl +"latlng=" + finalAddressUrl + "&key=" + apiKey;
-   
-        HttpGet get = new HttpGet(url);
-
-        try {
-            CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-            CloseableHttpResponse response = httpClient.execute(get);
-//            System.out.println(response.getStatusLine().getStatusCode());
-            BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-            StringBuffer result = new StringBuffer();
-            String line;
-            while ((line = br.readLine()) != null) {
-                result.append(line);
-            }
-            String resultString = result.toString();
-            //System.out.println(result);
-            JSONObject obj = new JSONObject(resultString);
-
-
-            JSONObject res = obj.getJSONArray("results").getJSONObject(0);
-            outcome = res.getString("formatted_address");
-           // System.out.println(res.getString("formatted_address"));
-
-
-
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-        return outcome;
+		return finalAddress;
+	}
+
+	private JSONObject getSmallerVersionOfJSONObject()
+			throws UnsupportedOperationException, ClientProtocolException, JSONException, IOException {
+
+		return createJSONObjectFromResponse().getJSONArray("results").getJSONObject(0);
+	}
+
+	private JSONObject createJSONObjectFromResponse()
+			throws UnsupportedOperationException, ClientProtocolException, JSONException, IOException {
+
+		return new JSONObject(getHttpResponseInString());
+	}
+
+	private String getHttpResponseInString()
+			throws UnsupportedOperationException, ClientProtocolException, IOException {
+		
+		return getResultStringBuffer(createBufferedReader())
+				.toString();
+
 	}
 	
-	
-    
-    
-    
+	private StringBuffer getResultStringBuffer(BufferedReader br) throws IOException{
+		String line;
+		StringBuffer result = new StringBuffer();
+		while ((line = br.readLine()) != null) {
+			result.append(line);
+		}
+		
+		return result;
+	}
+
+	private BufferedReader createBufferedReader()
+			throws UnsupportedOperationException, ClientProtocolException, IOException {
+
+		return new BufferedReader(createInputStreamReader());
+	}
+
+	private InputStreamReader createInputStreamReader()
+			throws UnsupportedOperationException, ClientProtocolException, IOException {
+
+		return new InputStreamReader(createCloseableHttpResponse().getEntity().getContent());
+	}
+
+	private CloseableHttpResponse createCloseableHttpResponse() throws ClientProtocolException, IOException {
+
+		return createCloseableHttpClient().execute(createHttpGet());
+	}
+
+	private CloseableHttpClient createCloseableHttpClient() {
+
+		return HttpClientBuilder.create().build();
+
+	}
+
+	private HttpGet createHttpGet() {
+
+		return new HttpGet(createUrlForHttpRequest());
+
+	}
+
+	private String createUrlForHttpRequest() {
+
+		return baseUrl + "latlng=" + lattitude + "," + longitude + "&key=" + apiKey;
+
+	}
 
 }
